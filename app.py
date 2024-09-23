@@ -1,7 +1,7 @@
 import streamlit as st
 import sqlite3
 
-conn = sqlite3.connect('football.db')
+conn = sqlite3.connect('data.db')
 cursor = conn.cursor()
 
 teams = ['김민규', '김환희', '노우찬', '박세중', '변상훈', '심이루', '염도현']
