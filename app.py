@@ -69,7 +69,7 @@ st.set_page_config(page_title='D리그 순위표')
 
 pages = ['일정', '순위표', '플레이오프', '결과 입력']
 page = st.sidebar.selectbox('', pages)
-schedule = []
+schedule = {}
 
 if page == '일정':
     st.title('일정')
