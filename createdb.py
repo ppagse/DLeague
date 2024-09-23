@@ -26,6 +26,12 @@ cursor.execute('''
         point INTEGER)
 ''')
 
+cursor.execute('''
+    CREATE TABLE IF NOT EXISTS gamenum(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        gamenum INTEGER)
+''')
+
 teams = ['김민규', '김환희', '노우찬', '박세중', '변상훈', '심이루', '염도현']
 
 for team in teams:
@@ -33,6 +39,11 @@ for team in teams:
         INSERT INTO standings (team, game, win, draw, lose, gd, point)
         VALUES (?, 0, 0, 0, 0, 0, 0)
     ''', (team,))
+
+cursor.execute('''
+    INSERT INTO gamenum (gamenum)
+    VALUES (0)
+''')
 
 conn.commit()
 print("table created")
