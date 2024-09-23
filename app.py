@@ -65,13 +65,27 @@ def reset():
         ''', (team,))
     conn.commit()
 
+def get_all_matches():
+    cursor.execute('SELECT * FROM matches')
+    matches = cursor.fetchall()
+    
+    print(matches)
+
 st.set_page_config(page_title='D리그 순위표')
 
-pages = ['일정', '순위표', '플레이오프', '결과 입력']
+pages = ['일정', '순위표', '플레이오프', '일정 입력', '결과 입력']
 page = st.sidebar.selectbox('', pages)
 schedule = {}
 
 if page == '일정':
+    get_all_matches()
+if page == '순위표':
+    pass
+if page == '플레이오프':
+    pass
+if page == '결과 입력':
+    pass
+if page == '일정 입력':
     st.title('일정')
     widget_id = (id for id in range(1, 100_00))
     for i in range(14):
@@ -89,10 +103,3 @@ if page == '일정':
         reset()
         for i in range(1, 43):
             add_match(i, schedule[i][0], schedule[i][1])
-
-elif page == '순위표':
-    pass
-elif page == '플레이오프':
-    pass
-elif page == '결과 입력':
-    pass
