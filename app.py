@@ -1,5 +1,6 @@
 import streamlit as st
 import sqlite3
+import pandas as pd
 
 conn = sqlite3.connect('data.db')
 cursor = conn.cursor()
@@ -24,34 +25,34 @@ def update_result(match_id, home_team, away_team, home_score, away_score):
             UPDATE standings
             SET game = standings.game + 1, win = standings.win + 1, point = standings.point + 3, gd = standings.gd + ?
             WHERE team = ?
-        ''', (home_score - away_score, home_team))
+        ''', (home_score - away_score, home_team,))
         cursor.execute('''
             UPDATE standings
             SET game = standings.game + 1, lose = standings.lose + 1, gd = standings.gd + ?
             WHERE team = ?
-        ''', (away_score - home_score, away_team))
+        ''', (away_score - home_score, away_team,))
     elif home_score == away_score:
         cursor.execute('''
             UPDATE standings
             SET game = standings.game + 1, draw = standings.draw + 1, point = standings.point + 1
             WHERE team = ?
-        ''', (home_team))
+        ''', (home_team,))
         cursor.execute('''
             UPDATE standings
             SET game = standings.game + 1, draw = standings.draw + 1, point = standings.point + 1
             WHERE team = ?
-        ''', (away_team))
+        ''', (away_team,))
     else:
        cursor.execute('''
             UPDATE standings
             SET game = standings.game + 1, win = standings.win + 1, point = standings.point + 3, gd = standings.gd + ?
             WHERE team = ?
-        ''', (away_score - home_score, away_team))
+        ''', (away_score - home_score, away_team,))
        cursor.execute('''
             UPDATE standings
             SET game = standings.game + 1, lose = standings.lose + 1, gd = standings.gd + ?
             WHERE team = ?
-        ''', (home_score - away_score, home_team)) 
+        ''', (home_score - away_score, home_team,)) 
     cursor.execute('''
     UPDATE gamenum
     SET gamenum = gamenum.gamenum + 1
@@ -63,14 +64,18 @@ def reset():
     cursor.execute('''
     DELETE FROM matches
     ''')
+    cursor.execute('''
+    DELETE FROM standings
+    ''')
     for team in teams:
         cursor.execute('''
             INSERT INTO standings (team, game, win, draw, lose, gd, point)
             VALUES (?, 0, 0, 0, 0, 0, 0)
         ''', (team,))
     cursor.execute('''
-    INSERT INTO gamenum (gamenum)
-    VALUES (0)
+    UPDATE gamenum
+    SET gamenum = 0
+    WHERE id = 1
     ''')
     conn.commit()
 
@@ -81,13 +86,21 @@ def get_all_matches():
 
 def get_gamenum():
     cursor.execute('SELECT * FROM gamenum')
-    gamenum = cursor.fetchall
+    gamenum = cursor.fetchall()
     gamenum = gamenum[0][1]
     return gamenum
 
+def get_scoreboard():
+    cursor.execute('SELECT * FROM standings')
+    standings = cursor.fetchall()
+    return standings
+
+def keyfunc(x):
+    return x[7] * 10000 + x[6]
+
 st.set_page_config(page_title='D리그 순위표')
 
-pages = ['일정', '순위표', '플레이오프', '일정 입력', '결과 입력']
+pages = ['일정', '순위표', '일정 입력', '결과 입력']
 page = st.sidebar.selectbox('', pages)
 schedule = {}
 
@@ -109,12 +122,16 @@ if page == '일정':
             st.write(match[3])
 
 if page == '순위표':
-    pass
-
-if page == '플레이오프':
-    pass
+    st.title('순위표')
+    scoreboard = get_scoreboard()
+    scoreboard.sort(key=keyfunc, reverse=True)
+    df = pd.DataFrame(scoreboard)
+    df.columns = ['순위', '이름', '경기', '승', '무', '패', '득실', '승점']
+    df['순위'] = [1,2,3,4,5,6,7]
+    st.dataframe(df, hide_index=True, width=10000, height=300)
 
 if page == '결과 입력':
+    st.title('결과 입력')
     gamenum = get_gamenum()
     matches = get_all_matches()
     match = matches[gamenum]
@@ -122,17 +139,17 @@ if page == '결과 입력':
     away_team = match[3]
     col1, col2, col3 = st.columns([8,1,8])
     with col1:
-        home_score = st.number_input(home_team, min_value=0, max_value=10, value=0, step=1, format='%.0f')
+        home_score = st.number_input(home_team, min_value=0., max_value=10., value=0., step=1., format='%.0f', key=1001)
     with col2:
         st.write('vs')
     with col3:
-        away_score = st.number_input(away_team, min_value=0, max_value=10, value=0, step=1, format='%.0f') 
+        away_score = st.number_input(away_team, min_value=0., max_value=10., value=0., step=1., format='%.0f', key=1002) 
     if st.button('결과 저장'):
         update_result(gamenum + 1, home_team, away_team, home_score, away_score)
-        st.experimental_rerun()
+        st.rerun()
         
 if page == '일정 입력':
-    st.title('일정')
+    st.title('일정 입력')
     widget_id = (id for id in range(1, 100_00))
     for i in range(14):
         st.subheader(f'{i+1}라운드')
