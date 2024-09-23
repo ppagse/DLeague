@@ -68,8 +68,7 @@ def reset():
 def get_all_matches():
     cursor.execute('SELECT * FROM matches')
     matches = cursor.fetchall()
-    
-    print(matches)
+    return matches
 
 st.set_page_config(page_title='D리그 순위표')
 
@@ -91,7 +90,7 @@ if page == '일정 입력':
     for i in range(14):
         st.subheader(f'{i+1}라운드')
         for j in range(1, 4):
-            col1, col2 , col3= st.columns([4, 1, 4])
+            col1, col2 , col3= st.columns([8, 1, 8])
             with col1:
                 home_team = st.selectbox("홈팀", teams, key = next(widget_id))
             with col2:
