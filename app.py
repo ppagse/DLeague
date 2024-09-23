@@ -77,7 +77,21 @@ page = st.sidebar.selectbox('', pages)
 schedule = {}
 
 if page == '일정':
-    get_all_matches()
+    matches = get_all_matches()
+    for i in range(42):
+        match = matches[i]
+        if i%3 == 0:
+            st.subheader(f'{i//3+1}라운드')
+        col1, col2, col3 = st.columns([8,1,8])
+        with col1:
+            st.write(match[2])
+        with col2:
+            if match[4] == None:
+                st.write('vs')
+            else:
+                st.write(f'{match[4]} : {match[5]}')
+        with col3:
+            st.write(match[3])
 if page == '순위표':
     pass
 if page == '플레이오프':
