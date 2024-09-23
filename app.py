@@ -9,7 +9,7 @@ teams = ['김민규', '김환희', '노우찬', '박세중', '변상훈', '심�
 def add_match(match_id, home_team, away_team):
     cursor.execute('''
         INSERT INTO matches (match_id, home_team, away_team)
-        VALUES (?, ?, ?, ?)
+        VALUES (?, ?, ?)
     ''', (match_id, home_team, away_team))
     conn.commit()
 
