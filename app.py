@@ -56,7 +56,7 @@ def update_result(match_id, home_team, away_team, home_score, away_score):
 
 def reset():
     cursor.execute('''
-    TRUNCATE TABLE matches
+    DELETE FROM matches
     ''')
     for team in teams:
         cursor.execute('''
