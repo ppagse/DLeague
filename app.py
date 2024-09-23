@@ -62,9 +62,10 @@ schedule = {}
 
 if page == '일정':
     st.title('일정')
+    widget_id = (id for id in range(1, 100_00))
     for i in range(1, 15):
         st.subheader(f'{i}라운드')
-        col1, col2 , col3= st.columns([2, 1, 1])
+        col1, col2 , col3= st.columns([2, 1, 2], key = next(widget_id))
         with col1:
             home_team = st.selectbox("홈팀", teams)
         with col2:
