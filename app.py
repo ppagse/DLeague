@@ -65,13 +65,13 @@ if page == '일정':
     widget_id = (id for id in range(1, 100_00))
     for i in range(1, 15):
         st.subheader(f'{i}라운드')
-        col1, col2 , col3= st.columns([2, 1, 2], key = next(widget_id))
+        col1, col2 , col3= st.columns([2, 1, 2])
         with col1:
-            home_team = st.selectbox("홈팀", teams)
+            home_team = st.selectbox("홈팀", teams, key = next(widget_id))
         with col2:
             st.write('vs')
         with col3:
-            away_team = st.selectbox("원정팀", teams)
+            away_team = st.selectbox("원정팀", teams, key = next(widget_id))
 
 elif page == '순위표':
     pass
